@@ -1,0 +1,44 @@
+# docker-compose.yml
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=mobileshop
+    volumes:
+      - mongo_data:/data/db
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - ecommerce_net
+
+  backend:
+    build: ./backend
+    container_name: backend
+    environment:
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/mobileshop
+      - CORS_ORIGIN=*
+    depends_on:
+      - mongo
+    ports:
+      - "4000:4000"
+    networks:
+      - ecommerce_net
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    networks:
+      - ecommerce_net
+
+networks:
+  ecommerce_net:
+
+volumes:
+  mongo_data:
