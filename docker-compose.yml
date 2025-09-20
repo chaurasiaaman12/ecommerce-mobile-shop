@@ -14,7 +14,7 @@ services:
       - ecommerce_net
 
   backend:
-    build: ./backend
+    build: ./Backend
     container_name: backend
     environment:
       - PORT=4000
